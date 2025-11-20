@@ -1,0 +1,96 @@
+@model IEnumerable<AttendanceSystem.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Manage Students";
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2>Manage Students</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="ImportStudents" class="btn btn-success me-2">
+            <i class="fas fa-file-excel"></i> Import from Excel
+        </a>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createStudentModal">
+            <i class="fas fa-user-plus"></i> Add Student
+        </button>
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Enrolled Classes</th>
+                    <th>Created Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var student in Model)
+                {
+                    <tr>
+                        <td>@student.GetFullName()</td>
+                        <td>@student.Email</td>
+                        <td>
+                            <span class="badge bg-info">0 classes</span>
+                        </td>
+                        <td>@student.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <a asp-action="EditStudent" asp-route-id="@student.Id" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-action="DeleteStudent" asp-route-id="@student.Id" class="btn btn-sm btn-danger"
+                               onclick="return confirm('Are you sure you want to delete this student?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No students found. Import students from Excel or create manually.
+    </div>
+}
+
+<!-- Create Student Modal -->
+<div class="modal fade" id="createStudentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Student</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form asp-action="CreateStudent" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="Email" name="Email" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="FirstName" class="form-label">First Name</label>
+                        <input type="text" class="form-control" id="FirstName" name="FirstName" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="LastName" class="form-label">Last Name</label>
+                        <input type="text" class="form-control" id="LastName" name="LastName" required />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
