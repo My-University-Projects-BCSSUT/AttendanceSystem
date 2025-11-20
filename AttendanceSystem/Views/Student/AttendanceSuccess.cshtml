@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "Attendance Submitted";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-success">
+            <div class="card-body text-center p-5">
+                <i class="fas fa-check-circle fa-5x text-success mb-4"></i>
+                <h2 class="card-title text-success mb-3">Attendance Submitted!</h2>
+                <p class="card-text fs-5 mb-4">
+                    Your attendance has been successfully recorded.
+                </p>
+
+                @if (ViewBag.AttendanceStatus != null)
+                {
+                    <div class="alert alert-info">
+                        <strong>Status:</strong> 
+                        @if (ViewBag.AttendanceStatus == "Present")
+                        {
+                            <span class="badge bg-success">Present</span>
+                        }
+                        else if (ViewBag.AttendanceStatus == "Late")
+                        {
+                            <span class="badge bg-warning">Late</span>
+                        }
+                    </div>
+                }
+
+                @if (ViewBag.ClassName != null)
+                {
+                    <div class="mb-3">
+                        <h5>Class Details</h5>
+                        <p class="mb-1"><strong>Class:</strong> @ViewBag.ClassName</p>
+                        <p class="mb-1"><strong>Course:</strong> @ViewBag.CourseName</p>
+                        <p class="mb-1"><strong>Time:</strong> @DateTime.Now.ToString("hh:mm tt")</p>
+                    </div>
+                }
+
+                <hr class="my-4" />
+
+                <div class="d-grid gap-2">
+                    <a asp-action="MyAttendance" class="btn btn-primary btn-lg">
+                        <i class="fas fa-list"></i> View My Attendance
+                    </a>
+                    <a asp-action="Index" class="btn btn-secondary">
+                        <i class="fas fa-home"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

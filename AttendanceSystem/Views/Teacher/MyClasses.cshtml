@@ -1,0 +1,80 @@
+@model IEnumerable<AttendanceSystem.Models.Class>
+
+@{
+    ViewData["Title"] = "My Classes";
+}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>My Classes</h2>
+        <p class="text-muted">Classes assigned to you</p>
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <div class="row g-4">
+        @foreach (var classItem in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">@classItem.Name</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-3 text-muted">
+                            @classItem.Course.GetFullCourseName()
+                        </h6>
+                        
+                        <div class="mb-2">
+                            <i class="fas fa-calendar"></i> 
+                            <strong>Schedule:</strong> @classItem.GetScheduleInfo()
+                        </div>
+                        
+                        @if (!string.IsNullOrEmpty(classItem.Location))
+                        {
+                            <div class="mb-2">
+                                <i class="fas fa-map-marker-alt"></i> 
+                                <strong>Location:</strong> @classItem.Location
+                            </div>
+                        }
+                        
+                        <div class="mb-3">
+                            <i class="fas fa-users"></i> 
+                            <strong>Enrolled:</strong> @classItem.Enrollments.Count students
+                        </div>
+                        
+                        <hr />
+                        
+                        <div class="d-grid gap-2">
+                            <a asp-action="ClassDetails" asp-route-id="@classItem.Id" 
+                               class="btn btn-primary">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                            <a asp-action="StartSession" asp-route-classId="@classItem.Id" 
+                               class="btn btn-success">
+                                <i class="fas fa-qrcode"></i> Start Attendance
+                            </a>
+                            <a asp-action="ClassAttendance" asp-route-id="@classItem.Id" 
+                               class="btn btn-info">
+                                <i class="fas fa-chart-bar"></i> View Attendance
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-muted">
+                        <small>
+                            <i class="fas fa-book"></i> @classItem.Course.Semester.Name
+                        </small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> You don't have any classes assigned yet. 
+        Please contact your administrator.
+    </div>
+}

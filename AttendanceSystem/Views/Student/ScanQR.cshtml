@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "Scan QR Code";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-qrcode"></i> Submit Attendance
+                </h2>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 
+                    Enter the session code shown by your teacher or scan the QR code
+                </div>
+
+                <form asp-action="SubmitAttendance" method="post">
+                    <div class="mb-4">
+                        <label for="sessionCode" class="form-label">Session Code</label>
+                        <input type="text" 
+                               class="form-control form-control-lg text-center" 
+                               id="sessionCode" 
+                               name="sessionCode" 
+                               placeholder="Enter session code"
+                               required 
+                               autofocus />
+                        <div class="form-text">
+                            The session code is displayed with the QR code by your teacher
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-check"></i> Submit Attendance
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+
+                <hr class="my-4" />
+
+                <div class="text-center">
+                    <h5 class="mb-3">Or Scan QR Code</h5>
+                    <p class="text-muted">Use your phone's camera app to scan the QR code</p>
+                    <div id="qr-reader" style="width: 100%; max-width: 500px; margin: 0 auto;"></div>
+                    <button id="start-scan" class="btn btn-success mt-3">
+                        <i class="fas fa-camera"></i> Start Camera
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert alert-danger mt-3">
+                <i class="fas fa-exclamation-circle"></i> @ViewBag.ErrorMessage
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script>
+        let html5QrCode;
+        
+        document.getElementById('start-scan').addEventListener('click', function() {
+            html5QrCode = new Html5Qrcode("qr-reader");
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: 250 },
+                (decodedText, decodedResult) => {
+                    document.getElementById('sessionCode').value = decodedText;
+                    html5QrCode.stop();
+                    // Auto-submit form
+                    document.querySelector('form').submit();
+                },
+                (errorMessage) => {
+                    // Handle scan failure, usually not necessary
+                }
+            ).catch((err) => {
+                alert('Failed to start camera: ' + err);
+            });
+            
+            this.style.display = 'none';
+        });
+    </script>
+}

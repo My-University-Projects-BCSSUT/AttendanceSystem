@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "Import Students";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title mb-4">Import Students from Excel</h2>
+                
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> Excel File Format</h5>
+                    <p class="mb-2">Your Excel file should have the following columns:</p>
+                    <ul class="mb-0">
+                        <li><strong>Email</strong> - Student email address (required)</li>
+                        <li><strong>FirstName</strong> - Student's first name</li>
+                        <li><strong>LastName</strong> - Student's last name</li>
+                    </ul>
+                </div>
+
+                <div class="mb-4">
+                    <h5>Sample Excel Format:</h5>
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Email</th>
+                                <th>FirstName</th>
+                                <th>LastName</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>student1@university.edu</td>
+                                <td>John</td>
+                                <td>Doe</td>
+                            </tr>
+                            <tr>
+                                <td>student2@university.edu</td>
+                                <td>Jane</td>
+                                <td>Smith</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <form asp-action="ImportStudents" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Select Excel File</label>
+                        <input type="file" class="form-control" id="file" name="file" 
+                               accept=".xlsx,.xls" required />
+                        <div class="form-text">Accepted formats: .xlsx, .xls</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-upload"></i> Import Students
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+
+                @if (ViewBag.SuccessMessage != null)
+                {
+                    <div class="alert alert-success mt-3">
+                        <i class="fas fa-check-circle"></i> @ViewBag.SuccessMessage
+                    </div>
+                }
+
+                @if (ViewBag.ErrorMessage != null)
+                {
+                    <div class="alert alert-danger mt-3">
+                        <i class="fas fa-exclamation-circle"></i> @ViewBag.ErrorMessage
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card shadow-sm mt-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="fas fa-download"></i> Download Sample Template
+                </h5>
+                <p class="card-text">Download a sample Excel template to get started quickly.</p>
+                <a asp-action="DownloadTemplate" class="btn btn-success">
+                    <i class="fas fa-file-excel"></i> Download Template
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
