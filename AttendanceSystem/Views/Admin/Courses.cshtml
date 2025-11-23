@@ -1,0 +1,75 @@
+@model IEnumerable<AttendanceSystem.Models.Course>
+
+@{
+    ViewData["Title"] = "Manage Courses";
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2>Manage Courses</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="CreateCourse" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create Course
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Credits</th>
+                    <th>Semester</th>
+                    <th>Classes</th>
+                    <th>Created</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var course in Model)
+                {
+                    <tr>
+                        <td><strong>@course.Code</strong></td>
+                        <td>@course.Name</td>
+                        <td>
+                            <span class="badge bg-info">@course.Credits Credits</span>
+                        </td>
+                        <td>@course.Semester.Name</td>
+                        <td>@course.Classes.Count</td>
+                        <td>@course.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <a asp-action="EditCourse" asp-route-id="@course.Id" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form asp-action="DeleteCourse" asp-route-id="@course.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Are you sure you want to delete this course?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No courses found. Create your first course to get started.
+    </div>
+}

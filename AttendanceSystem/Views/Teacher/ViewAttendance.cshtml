@@ -1,0 +1,267 @@
+@model IEnumerable<AttendanceSystem.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Class Attendance";
+    var classInfo = ViewBag.Class as AttendanceSystem.Models.Class;
+}
+
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Attendance Records</h2>
+        @if (classInfo != null)
+        {
+            <p class="text-muted">
+                @classInfo.Name - @classInfo.Course.Code (@classInfo.Course.Name)
+            </p>
+        }
+    </div>
+    <div class="col-md-4 text-end">
+        <a asp-action="ClassDetails" asp-route-id="@classInfo?.Id" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Class
+        </a>
+    </div>
+</div>
+
+@if (Model != null && Model.Any())
+{
+    <!-- Summary Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Present
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Present)
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-check-circle fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Late
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Late)
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x text-warning"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                Absent
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Absent)
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-times-circle fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Excused
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                @Model.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Excused)
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-check fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Records by Session -->
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0"><i class="fas fa-list"></i> Attendance Records by Session</h5>
+        </div>
+        <div class="card-body">
+            @{
+                var groupedSessions = Model.GroupBy(a => a.AttendanceSession)
+                    .OrderByDescending(g => g.Key.SessionDate)
+                    .ToList();
+            }
+
+            @foreach (var sessionGroup in groupedSessions)
+            {
+                var session = sessionGroup.Key;
+                var attendances = sessionGroup.OrderBy(a => a.Student.LastName).ThenBy(a => a.Student.FirstName).ToList();
+                var presentCount = attendances.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Present);
+                var lateCount = attendances.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Late);
+                var absentCount = attendances.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Absent);
+                var excusedCount = attendances.Count(a => a.Status == AttendanceSystem.Models.AttendanceStatus.Excused);
+                var totalCount = attendances.Count;
+
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-header @(session.IsActive ? "bg-success" : "bg-secondary") text-white">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-calendar"></i> @session.SessionDate.ToLocalTime().ToString("MMMM dd, yyyy - hh:mm tt")
+                                </h6>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <span class="badge @(session.IsActive ? "bg-light text-success" : "bg-light text-dark")">
+                                    @(session.IsActive ? "Active" : "Ended")
+                                </span>
+                                <span class="badge bg-light text-dark ms-2">
+                                    @totalCount Students
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <!-- Session Statistics -->
+                        <div class="row mb-3">
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-success bg-opacity-10 rounded">
+                                    <h4 class="text-success mb-0">@presentCount</h4>
+                                    <small class="text-muted">Present</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-warning bg-opacity-10 rounded">
+                                    <h4 class="text-warning mb-0">@lateCount</h4>
+                                    <small class="text-muted">Late</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-danger bg-opacity-10 rounded">
+                                    <h4 class="text-danger mb-0">@absentCount</h4>
+                                    <small class="text-muted">Absent</small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-2 bg-info bg-opacity-10 rounded">
+                                    <h4 class="text-info mb-0">@excusedCount</h4>
+                                    <small class="text-muted">Excused</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Student Attendance List -->
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Email</th>
+                                        <th>Check-In Time</th>
+                                        <th>Status</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var attendance in attendances)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <i class="fas fa-user-graduate"></i>
+                                                @attendance.Student.GetFullName()
+                                            </td>
+                                            <td>
+                                                <small class="text-muted">@attendance.Student.Email</small>
+                                            </td>
+                                            <td>
+                                                @if (attendance.CheckInTime.HasValue)
+                                                {
+                                                    <span>@attendance.CheckInTime.Value.ToLocalTime().ToString("hh:mm:ss tt")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @switch (attendance.Status)
+                                                {
+                                                    case AttendanceSystem.Models.AttendanceStatus.Present:
+                                                        <span class="badge bg-success"><i class="fas fa-check"></i> Present</span>
+                                                        break;
+                                                    case AttendanceSystem.Models.AttendanceStatus.Late:
+                                                        <span class="badge bg-warning"><i class="fas fa-clock"></i> Late</span>
+                                                        break;
+                                                    case AttendanceSystem.Models.AttendanceStatus.Absent:
+                                                        <span class="badge bg-danger"><i class="fas fa-times"></i> Absent</span>
+                                                        break;
+                                                    case AttendanceSystem.Models.AttendanceStatus.Excused:
+                                                        <span class="badge bg-info"><i class="fas fa-user-check"></i> Excused</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(attendance.Notes))
+                                                {
+                                                    <small>@attendance.Notes</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">-</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No attendance records found for this class yet. Start an attendance session to begin tracking.
+    </div>
+}
+
+<style>
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+.border-left-danger {
+    border-left: 0.25rem solid #e74a3b !important;
+}
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+</style>

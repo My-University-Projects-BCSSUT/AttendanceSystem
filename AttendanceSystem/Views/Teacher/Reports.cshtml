@@ -1,0 +1,222 @@
+@model IEnumerable<AttendanceSystem.Models.Class>
+
+@{
+    ViewData["Title"] = "Attendance Reports";
+    var stats = ViewBag.Stats;
+    var recentAttendances = ViewBag.RecentAttendances as List<AttendanceSystem.Models.Attendance>;
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-chart-line"></i> Attendance Reports</h2>
+        <a asp-action="MyClasses" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Classes
+        </a>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border-primary shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-chalkboard fa-2x text-primary mb-2"></i>
+                    <h3 class="mb-0">@stats.TotalClasses</h3>
+                    <p class="text-muted mb-0">Total Classes</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-info shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-qrcode fa-2x text-info mb-2"></i>
+                    <h3 class="mb-0">@stats.TotalSessions</h3>
+                    <p class="text-muted mb-0">Sessions Held</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-warning shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-2x text-warning mb-2"></i>
+                    <h3 class="mb-0">@stats.TotalStudents</h3>
+                    <p class="text-muted mb-0">Total Students</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card border-success shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-percentage fa-2x text-success mb-2"></i>
+                    <h3 class="mb-0">@stats.AttendanceRate%</h3>
+                    <p class="text-muted mb-0">Attendance Rate</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Breakdown -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-pie"></i> Attendance Breakdown</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="fas fa-check-circle text-success fa-2x mb-2"></i>
+                                <h4 class="mb-0">@stats.PresentCount</h4>
+                                <p class="text-muted mb-0">Present</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="fas fa-clock text-warning fa-2x mb-2"></i>
+                                <h4 class="mb-0">@stats.LateCount</h4>
+                                <p class="text-muted mb-0">Late</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="fas fa-times-circle text-danger fa-2x mb-2"></i>
+                                <h4 class="mb-0">@stats.AbsentCount</h4>
+                                <p class="text-muted mb-0">Absent</p>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 border rounded bg-light">
+                                <i class="fas fa-file-medical text-info fa-2x mb-2"></i>
+                                <h4 class="mb-0">@stats.ExcusedCount</h4>
+                                <p class="text-muted mb-0">Excused</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Classes Overview -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> Classes Overview</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Class Name</th>
+                                        <th>Schedule</th>
+                                        <th>Students</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var classItem in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <strong>@classItem.Course.Code</strong><br />
+                                                <small class="text-muted">@classItem.Course.Name</small>
+                                            </td>
+                                            <td>@classItem.Name</td>
+                                            <td>
+                                                <i class="fas fa-calendar"></i> @classItem.DayOfWeek<br />
+                                                <i class="fas fa-clock"></i> @classItem.StartTime.ToString(@"hh\:mm") - @classItem.EndTime.ToString(@"hh\:mm")
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@classItem.Enrollments.Count Students</span>
+                                            </td>
+                                            <td>
+                                                <a asp-action="ViewAttendance" asp-route-classId="@classItem.Id" 
+                                                   class="btn btn-sm btn-primary">
+                                                    <i class="fas fa-chart-bar"></i> View Details
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> You don't have any classes assigned yet.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Attendance Activity -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Recent Attendance Activity</h5>
+                </div>
+                <div class="card-body">
+                    @if (recentAttendances != null && recentAttendances.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Student</th>
+                                        <th>Class</th>
+                                        <th>Status</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var attendance in recentAttendances)
+                                    {
+                                        <tr>
+                                            <td>@attendance.Student.FirstName @attendance.Student.LastName</td>
+                                            <td>@attendance.AttendanceSession.Class.Name</td>
+                                            <td>
+                                                @switch (attendance.Status)
+                                                {
+                                                    case AttendanceSystem.Models.AttendanceStatus.Present:
+                                                        <span class="badge bg-success">Present</span>
+                                                        break;
+                                                    case AttendanceSystem.Models.AttendanceStatus.Late:
+                                                        <span class="badge bg-warning">Late</span>
+                                                        break;
+                                                    case AttendanceSystem.Models.AttendanceStatus.Absent:
+                                                        <span class="badge bg-danger">Absent</span>
+                                                        break;
+                                                    case AttendanceSystem.Models.AttendanceStatus.Excused:
+                                                        <span class="badge bg-info">Excused</span>
+                                                        break;
+                                                }
+                                            </td>
+                                            <td>
+                                                <small>@attendance.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy hh:mm tt")</small>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> No recent attendance activity.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

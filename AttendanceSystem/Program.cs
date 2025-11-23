@@ -5,15 +5,16 @@ using AttendanceSystem.Patterns.Factory;
 using AttendanceSystem.Patterns.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-    ?? "Data Source=AttendanceSystem.db";
+    ?? "Server=localhost,1433;Database=AttendanceSystemDb;User Id=sa;Password=Admin@123;TrustServerCertificate=True;Encrypt=False;";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
+    options.UseSqlServer(connectionString));
 
 // Add Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>

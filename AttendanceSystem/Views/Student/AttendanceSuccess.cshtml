@@ -33,7 +33,7 @@
                         <h5>Class Details</h5>
                         <p class="mb-1"><strong>Class:</strong> @ViewBag.ClassName</p>
                         <p class="mb-1"><strong>Course:</strong> @ViewBag.CourseName</p>
-                        <p class="mb-1"><strong>Time:</strong> @DateTime.Now.ToString("hh:mm tt")</p>
+                        <p class="mb-1"><strong>Time:</strong> @DateTime.UtcNow.ToLocalTime().ToString("hh:mm tt")</p>
                     </div>
                 }
 

@@ -1,0 +1,67 @@
+@{
+    ViewData["Title"] = "Enroll Student";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-user-plus"></i> Enroll Student in Class
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateEnrollment" method="post">
+                        <div class="mb-3">
+                            <label for="classId" class="form-label">Select Class</label>
+                            <select class="form-select" id="classId" name="classId" required>
+                                <option value="">Choose a class...</option>
+                                @if (ViewBag.Classes != null)
+                                {
+                                    @foreach (var classItem in ViewBag.Classes as SelectList)
+                                    {
+                                        <option value="@classItem.Value">@classItem.Text</option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-text">Select the class to enroll the student in</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="studentId" class="form-label">Select Student</label>
+                            <select class="form-select" id="studentId" name="studentId" required>
+                                <option value="">Choose a student...</option>
+                                @if (ViewBag.Students != null)
+                                {
+                                    @foreach (var student in ViewBag.Students as SelectList)
+                                    {
+                                        <option value="@student.Value">@student.Text</option>
+                                    }
+                                }
+                            </select>
+                            <div class="form-text">Select the student to enroll</div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i> <strong>Note:</strong> Students cannot be enrolled in the same class twice.
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Enrollments" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Enroll Student
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

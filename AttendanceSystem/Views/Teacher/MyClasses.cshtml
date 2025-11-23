@@ -51,11 +51,12 @@
                                class="btn btn-primary">
                                 <i class="fas fa-eye"></i> View Details
                             </a>
-                            <a asp-action="StartSession" asp-route-classId="@classItem.Id" 
-                               class="btn btn-success">
-                                <i class="fas fa-qrcode"></i> Start Attendance
-                            </a>
-                            <a asp-action="ClassAttendance" asp-route-id="@classItem.Id" 
+                            <form asp-action="StartSession" asp-route-classId="@classItem.Id" method="post">
+                                <button type="submit" class="btn btn-success w-100">
+                                    <i class="fas fa-qrcode"></i> Start Attendance
+                                </button>
+                            </form>
+                            <a asp-action="ViewAttendance" asp-route-classId="@classItem.Id" 
                                class="btn btn-info">
                                 <i class="fas fa-chart-bar"></i> View Attendance
                             </a>

@@ -1,0 +1,112 @@
+@model AttendanceSystem.Models.Class
+
+@{
+    ViewData["Title"] = "Edit Class";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-edit"></i> Edit Class
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="EditClass" method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Class Name</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   value="@Model.Name" required />
+                            <div class="form-text">Unique identifier for this class section</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="courseId" class="form-label">Course</label>
+                                    <select class="form-select" id="courseId" name="courseId" required>
+                                        @if (ViewBag.Courses != null)
+                                        {
+                                            @foreach (var item in ViewBag.Courses as SelectList)
+                                            {
+                                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherId" class="form-label">Teacher</label>
+                                    <select class="form-select" id="teacherId" name="teacherId" required>
+                                        @if (ViewBag.Teachers != null)
+                                        {
+                                            @foreach (var item in ViewBag.Teachers as SelectList)
+                                            {
+                                                <option value="@item.Value" selected="@item.Selected">@item.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   value="@Model.Location" />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="dayOfWeek" class="form-label">Day of Week</label>
+                                    <select class="form-select" id="dayOfWeek" name="dayOfWeek" required>
+                                        <option value="0" selected="@(Model.DayOfWeek == DayOfWeek.Sunday)">Sunday</option>
+                                        <option value="1" selected="@(Model.DayOfWeek == DayOfWeek.Monday)">Monday</option>
+                                        <option value="2" selected="@(Model.DayOfWeek == DayOfWeek.Tuesday)">Tuesday</option>
+                                        <option value="3" selected="@(Model.DayOfWeek == DayOfWeek.Wednesday)">Wednesday</option>
+                                        <option value="4" selected="@(Model.DayOfWeek == DayOfWeek.Thursday)">Thursday</option>
+                                        <option value="5" selected="@(Model.DayOfWeek == DayOfWeek.Friday)">Friday</option>
+                                        <option value="6" selected="@(Model.DayOfWeek == DayOfWeek.Saturday)">Saturday</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="startTime" class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" id="startTime" name="startTime" 
+                                           value="@Model.StartTime.ToString(@"hh\:mm")" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="endTime" class="form-label">End Time</label>
+                                    <input type="time" class="form-control" id="endTime" name="endTime" 
+                                           value="@Model.EndTime.ToString(@"hh\:mm")" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Classes" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update Class
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

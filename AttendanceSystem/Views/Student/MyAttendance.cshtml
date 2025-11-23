@@ -28,13 +28,13 @@
                 @foreach (var attendance in Model)
                 {
                     <tr>
-                        <td>@attendance.AttendanceSession.SessionDate.ToString("MMM dd, yyyy")</td>
+                        <td>@attendance.AttendanceSession.SessionDate.ToLocalTime().ToString("MMM dd, yyyy")</td>
                         <td>@attendance.AttendanceSession.Class.Course.GetFullCourseName()</td>
                         <td>@attendance.AttendanceSession.Class.Name</td>
                         <td>
                             @if (attendance.CheckInTime.HasValue)
                             {
-                                @attendance.CheckInTime.Value.ToString("hh:mm tt")
+                                @attendance.CheckInTime.Value.ToLocalTime().ToString("hh:mm tt")
                             }
                             else
                             {

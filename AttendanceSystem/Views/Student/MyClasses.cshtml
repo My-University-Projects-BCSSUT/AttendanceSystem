@@ -1,0 +1,89 @@
+@model IEnumerable<AttendanceSystem.Models.ClassEnrollment>
+
+@{
+    ViewData["Title"] = "My Classes";
+}
+
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-book"></i> My Enrolled Classes</h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="row g-4">
+            @foreach (var enrollment in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">@enrollment.Class.Course.Code</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="card-title">@enrollment.Class.Course.Name</h6>
+                            <p class="text-muted mb-3">@enrollment.Class.Name</p>
+                            
+                            <div class="mb-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-chalkboard-teacher text-muted me-2"></i>
+                                    <span>@enrollment.Class.Teacher.FirstName @enrollment.Class.Teacher.LastName</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-calendar text-muted me-2"></i>
+                                    <span>@enrollment.Class.DayOfWeek</span>
+                                </div>
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="fas fa-clock text-muted me-2"></i>
+                                    <span>@enrollment.Class.StartTime.ToString(@"hh\:mm") - @enrollment.Class.EndTime.ToString(@"hh\:mm")</span>
+                                </div>
+                                @if (!string.IsNullOrEmpty(enrollment.Class.Location))
+                                {
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="fas fa-map-marker-alt text-muted me-2"></i>
+                                        <span>@enrollment.Class.Location</span>
+                                    </div>
+                                }
+                                @if (enrollment.Class.Course.Semester != null)
+                                {
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-calendar-check text-muted me-2"></i>
+                                        <span>@enrollment.Class.Course.Semester.Name</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <small class="text-muted">Credits</small>
+                                    <p class="mb-0 fw-bold">@enrollment.Class.Course.Credits</p>
+                                </div>
+                                <div class="col-6">
+                                    <small class="text-muted">Enrolled</small>
+                                    <p class="mb-0">
+                                        <span class="text-success">
+                                            <i class="fas fa-check-circle"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-12">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> You are not enrolled in any classes yet. Please contact your administrator.
+                </div>
+            </div>
+        </div>
+    }
+</div>

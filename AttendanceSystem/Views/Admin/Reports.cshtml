@@ -1,0 +1,277 @@
+@{
+    ViewData["Title"] = "System Reports";
+    var stats = ViewBag.Stats;
+}
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <h2>System Reports & Statistics</h2>
+        <p class="text-muted">Overview of the attendance management system</p>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Students
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalStudents
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Teachers
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalTeachers
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Total Classes
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalClasses
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-chalkboard fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Total Courses
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalCourses
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-book fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Second Row -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Enrollments
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalEnrollments
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Attendance Sessions
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalAttendanceSessions
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-qrcode fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Attendance Records
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalAttendanceRecords
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                            Total Semesters
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            @stats.TotalSemesters
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-alt fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Active Semester -->
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-check"></i> Active Semester
+                </h5>
+            </div>
+            <div class="card-body">
+                @{
+                    var activeSemester = stats.ActiveSemester;
+                }
+                @if (activeSemester != null)
+                {
+                    <div class="row">
+                        <div class="col-md-3">
+                            <strong>Semester Name:</strong>
+                            <p>@activeSemester.Name</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Start Date:</strong>
+                            <p>@activeSemester.StartDate.ToString("MMM dd, yyyy")</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>End Date:</strong>
+                            <p>@activeSemester.EndDate.ToString("MMM dd, yyyy")</p>
+                        </div>
+                        <div class="col-md-3">
+                            <strong>Status:</strong>
+                            <p><span class="badge bg-success">Active</span></p>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> No active semester found. Please create and activate a semester.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-tasks"></i> Quick Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Semesters" class="btn btn-outline-primary btn-block w-100">
+                            <i class="fas fa-calendar"></i> Manage Semesters
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Courses" class="btn btn-outline-success btn-block w-100">
+                            <i class="fas fa-book"></i> Manage Courses
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Classes" class="btn btn-outline-info btn-block w-100">
+                            <i class="fas fa-chalkboard"></i> Manage Classes
+                        </a>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <a asp-action="Students" class="btn btn-outline-warning btn-block w-100">
+                            <i class="fas fa-user-graduate"></i> Manage Students
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-left-primary {
+    border-left: 0.25rem solid #4e73df !important;
+}
+.border-left-success {
+    border-left: 0.25rem solid #1cc88a !important;
+}
+.border-left-info {
+    border-left: 0.25rem solid #36b9cc !important;
+}
+.border-left-warning {
+    border-left: 0.25rem solid #f6c23e !important;
+}
+.border-left-danger {
+    border-left: 0.25rem solid #e74a3b !important;
+}
+</style>

@@ -55,10 +55,12 @@
                             <a asp-action="EditSemester" asp-route-id="@semester.Id" class="btn btn-sm btn-warning">
                                 <i class="fas fa-edit"></i> Edit
                             </a>
-                            <a asp-action="DeleteSemester" asp-route-id="@semester.Id" class="btn btn-sm btn-danger" 
-                               onclick="return confirm('Are you sure you want to delete this semester?')">
-                                <i class="fas fa-trash"></i> Delete
-                            </a>
+                            <form asp-action="DeleteSemester" asp-route-id="@semester.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Are you sure you want to delete this semester?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 }

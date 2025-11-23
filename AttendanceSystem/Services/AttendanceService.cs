@@ -12,6 +12,8 @@ namespace AttendanceSystem.Services
         Task<Attendance> SubmitAttendanceAsync(int sessionId, string studentId, string qrCode);
         Task<List<Attendance>> GetClassAttendanceAsync(int classId);
         Task<AttendanceSession?> GetActiveSessionByQRCodeAsync(string qrCode);
+        Task ExpireSessionAsync(int sessionId);
+        Task MarkAbsentStudentsAsync(int sessionId);
     }
 
     public class AttendanceService : IAttendanceService
@@ -111,6 +113,55 @@ namespace AttendanceSystem.Services
                 .Include(s => s.Class)
                     .ThenInclude(c => c.Course)
                 .FirstOrDefaultAsync(s => s.QRCode == qrCode && s.IsActive);
+        }
+
+        public async Task ExpireSessionAsync(int sessionId)
+        {
+            var session = await _context.AttendanceSessions.FindAsync(sessionId);
+            if (session != null && session.IsActive)
+            {
+                session.IsActive = false;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task MarkAbsentStudentsAsync(int sessionId)
+        {
+            var session = await _context.AttendanceSessions
+                .Include(s => s.Class)
+                    .ThenInclude(c => c.Enrollments)
+                        .ThenInclude(e => e.Student)
+                .FirstOrDefaultAsync(s => s.Id == sessionId);
+
+            if (session == null) return;
+
+            // Get all enrolled students for this class
+            var enrolledStudentIds = session.Class.Enrollments.Select(e => e.StudentId).ToList();
+
+            // Get students who already have attendance records
+            var studentsWithAttendance = await _context.Attendances
+                .Where(a => a.AttendanceSessionId == sessionId)
+                .Select(a => a.StudentId)
+                .ToListAsync();
+
+            // Find students who are enrolled but didn't check in
+            var absentStudentIds = enrolledStudentIds.Except(studentsWithAttendance).ToList();
+
+            // Create absent records for these students
+            foreach (var studentId in absentStudentIds)
+            {
+                var attendance = new Attendance
+                {
+                    AttendanceSessionId = sessionId,
+                    StudentId = studentId,
+                    CheckInTime = null,
+                    Status = AttendanceStatus.Absent,
+                    CreatedAt = DateTime.UtcNow
+                };
+                _context.Attendances.Add(attendance);
+            }
+
+            await _context.SaveChangesAsync();
         }
     }
 }

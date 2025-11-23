@@ -1,20 +1,23 @@
 @model AttendanceSystem.Models.Semester
 
 @{
-    ViewData["Title"] = "Create Semester";
+    ViewData["Title"] = "Edit Semester";
 }
 
 <div class="container mt-4">
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card">
-                <div class="card-header bg-primary text-white">
+                <div class="card-header bg-warning text-dark">
                     <h4 class="mb-0">
-                        <i class="fas fa-calendar-plus"></i> Create New Semester
+                        <i class="fas fa-edit"></i> Edit Semester
                     </h4>
                 </div>
                 <div class="card-body">
-                    <form asp-action="CreateSemester" method="post">
+                    <form asp-action="EditSemester" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CreatedAt" />
+                        
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label">Semester Name</label>
                             <input asp-for="Name" class="form-control" placeholder="e.g., Semester 1 2025" required />
@@ -51,8 +54,8 @@
                             <a asp-action="Semesters" class="btn btn-secondary">
                                 <i class="fas fa-times"></i> Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Create Semester
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fas fa-save"></i> Update Semester
                             </button>
                         </div>
                     </form>

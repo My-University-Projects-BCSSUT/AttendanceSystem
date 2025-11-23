@@ -1,0 +1,89 @@
+@model IEnumerable<AttendanceSystem.Models.Class>
+
+@{
+    ViewData["Title"] = "Manage Classes";
+}
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h2>Manage Classes</h2>
+    </div>
+    <div class="col-md-6 text-end">
+        <a asp-action="CreateClass" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Create Class
+        </a>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (Model != null && Model.Any())
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>Class Name</th>
+                    <th>Course</th>
+                    <th>Teacher</th>
+                    <th>Schedule</th>
+                    <th>Location</th>
+                    <th>Students</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var classItem in Model)
+                {
+                    <tr>
+                        <td><strong>@classItem.Name</strong></td>
+                        <td>
+                            <span class="badge bg-info">@classItem.Course.Code</span>
+                            @classItem.Course.Name
+                        </td>
+                        <td>@classItem.Teacher.FirstName @classItem.Teacher.LastName</td>
+                        <td>
+                            <i class="fas fa-calendar"></i> @classItem.GetScheduleInfo()
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(classItem.Location))
+                            {
+                                <i class="fas fa-map-marker-alt"></i> @classItem.Location
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not set</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge bg-primary">@classItem.Enrollments.Count Students</span>
+                        </td>
+                        <td>
+                            <a asp-action="EditClass" asp-route-id="@classItem.Id" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form asp-action="DeleteClass" asp-route-id="@classItem.Id" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" 
+                                        onclick="return confirm('Are you sure you want to delete this class?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="alert alert-info">
+        <i class="fas fa-info-circle"></i> No classes found. Create your first class to get started.
+    </div>
+}

@@ -8,10 +8,15 @@ namespace AttendanceSystem.Patterns.Singleton
         private static ExcelService? _instance;
         private static readonly object _lock = new object();
 
+        static ExcelService()
+        {
+            // Set EPPlus 7.x license context for non-commercial use
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+        }
+
         private ExcelService()
         {
-            // No special initialization needed for EPPlus 8.x
-            // License is set in Program.cs
+            // Constructor is private for Singleton pattern
         }
 
         public static ExcelService Instance

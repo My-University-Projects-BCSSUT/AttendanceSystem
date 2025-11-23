@@ -1,0 +1,151 @@
+@model AttendanceSystem.Models.AttendanceSession
+
+@{
+    ViewData["Title"] = "Attendance QR Code";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-qrcode"></i> Attendance Session Active
+                    </h3>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <h4>@Model.Class.Course.Name</h4>
+                        <p class="text-muted">@Model.Class.Name</p>
+                    </div>
+
+                    <div class="qr-code-container mb-4">
+                        <img src="@ViewBag.QRCodeImage" alt="Attendance QR Code" class="img-fluid" style="max-width: 400px;" />
+                    </div>
+
+                    <div class="alert alert-success mb-3">
+                        <h5><i class="fas fa-key"></i> Session Code (for Manual Entry)</h5>
+                        <div class="input-group">
+                            <input type="text" class="form-control form-control-lg text-center fw-bold" 
+                                   id="sessionCode" 
+                                   value="@Model.QRCode" 
+                                   readonly 
+                                   style="font-size: 1.1rem; letter-spacing: 1px;" />
+                            <button class="btn btn-outline-secondary" type="button" onclick="copySessionCode()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <small class="text-muted">Students can manually enter this code if they can't scan the QR code</small>
+                    </div>
+
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-info-circle"></i> Instructions</h5>
+                        <ul class="mb-0 text-start">
+                            <li><strong>Option 1:</strong> Students can scan the QR code with their camera</li>
+                            <li><strong>Option 2:</strong> Students can manually enter the session code above</li>
+                        </ul>
+                    </div>
+
+                    <div class="row text-center mb-4">
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-muted">Session Started</h6>
+                                    <h5 id="session-start">@Model.CreatedAt.ToLocalTime().ToString("hh:mm tt")</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-muted">Expires At</h6>
+                                    <h5 class="text-danger" id="expires-at">@ViewBag.ExpiresAt?.ToLocalTime().ToString("hh:mm tt")</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="fas fa-clock"></i> 
+                        <span id="countdown">Calculating time remaining...</span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <form asp-action="CloseSession" asp-route-sessionId="@Model.Id" method="post" onsubmit="return confirm('Are you sure you want to close this session? Students who haven\'t checked in will be marked as absent.');">
+                            <button type="submit" class="btn btn-warning btn-lg w-100 mb-2">
+                                <i class="fas fa-times-circle"></i> Close Session Now
+                            </button>
+                        </form>
+                        <a asp-action="ViewAttendance" asp-route-classId="@Model.ClassId" class="btn btn-primary btn-lg">
+                            <i class="fas fa-chart-bar"></i> View Attendance Records
+                        </a>
+                        <a asp-action="MyClasses" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to My Classes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Copy session code to clipboard
+        function copySessionCode() {
+            const sessionCodeInput = document.getElementById('sessionCode');
+            sessionCodeInput.select();
+            sessionCodeInput.setSelectionRange(0, 99999); // For mobile devices
+            
+            const btn = document.querySelector('button[onclick="copySessionCode()"]');
+            
+            navigator.clipboard.writeText(sessionCodeInput.value).then(() => {
+                // Show success feedback
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.classList.remove('btn-outline-secondary');
+                btn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-secondary');
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy: ' + err);
+            });
+        }
+        
+        // Countdown timer - ExpiresAt is stored as UTC in database
+        const expiresAt = new Date('@ViewBag.ExpiresAt?.ToString("yyyy-MM-ddTHH:mm:ssZ")');
+        
+        function updateCountdown() {
+            const now = new Date();
+            const diff = expiresAt - now;
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').innerHTML = '<strong>Session Expired</strong>';
+                document.getElementById('countdown').parentElement.classList.remove('alert-warning');
+                document.getElementById('countdown').parentElement.classList.add('alert-danger');
+                return;
+            }
+            
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            
+            document.getElementById('countdown').innerHTML = 
+                `<strong>Time Remaining: ${minutes}:${seconds.toString().padStart(2, '0')}</strong>`;
+        }
+        
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+        
+        // Auto-refresh page when session expires
+        const timeUntilExpiry = expiresAt - new Date();
+        if (timeUntilExpiry > 0) {
+            setTimeout(() => {
+                location.reload();
+            }, timeUntilExpiry);
+        }
+    </script>
+}

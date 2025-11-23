@@ -67,6 +67,7 @@ namespace AttendanceSystem.Controllers
             var info = await _signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
+                TempData["ErrorMessage"] = "Error loading external login information.";
                 return RedirectToAction(nameof(Login));
             }
 
@@ -74,6 +75,7 @@ namespace AttendanceSystem.Controllers
             
             if (signInResult.Succeeded)
             {
+                // User already exists with this Google account
                 return RedirectToLocal(returnUrl);
             }
             else
@@ -83,29 +85,57 @@ namespace AttendanceSystem.Controllers
                 var firstName = info.Principal.FindFirst(System.Security.Claims.ClaimTypes.GivenName)?.Value ?? "";
                 var lastName = info.Principal.FindFirst(System.Security.Claims.ClaimTypes.Surname)?.Value ?? "";
 
-                if (!string.IsNullOrEmpty(email))
+                if (string.IsNullOrEmpty(email))
                 {
-                    var user = new ApplicationUser
-                    {
-                        UserName = email,
-                        Email = email,
-                        FirstName = firstName,
-                        LastName = lastName,
-                        EmailConfirmed = true
-                    };
+                    TempData["ErrorMessage"] = "Unable to get email from Google account.";
+                    return RedirectToAction(nameof(Login));
+                }
 
-                    var createResult = await _userManager.CreateAsync(user);
-                    if (createResult.Succeeded)
+                // Check if user already exists with this email
+                var existingUser = await _userManager.FindByEmailAsync(email);
+                if (existingUser != null)
+                {
+                    // Link Google login to existing account
+                    var addLoginResult = await _userManager.AddLoginAsync(existingUser, info);
+                    if (addLoginResult.Succeeded)
                     {
-                        await _userManager.AddToRoleAsync(user, "Student");
-                        await _userManager.AddLoginAsync(user, info);
-                        await _signInManager.SignInAsync(user, isPersistent: true);
+                        await _signInManager.SignInAsync(existingUser, isPersistent: true);
+                        TempData["SuccessMessage"] = "Google account linked successfully!";
                         return RedirectToLocal(returnUrl);
                     }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Failed to link Google account to existing user.";
+                        return RedirectToAction(nameof(Login));
+                    }
+                }
+
+                // Create new user
+                var user = new ApplicationUser
+                {
+                    UserName = email,
+                    Email = email,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    EmailConfirmed = true
+                };
+
+                var createResult = await _userManager.CreateAsync(user);
+                if (createResult.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Student");
+                    await _userManager.AddLoginAsync(user, info);
+                    await _signInManager.SignInAsync(user, isPersistent: true);
+                    TempData["SuccessMessage"] = $"Welcome {firstName}! Your student account has been created.";
+                    return RedirectToAction("Index", "Student");
+                }
+                else
+                {
+                    var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                    TempData["ErrorMessage"] = $"Failed to create account: {errors}";
+                    return RedirectToAction(nameof(Login));
                 }
             }
-
-            return RedirectToAction(nameof(Login));
         }
 
         public IActionResult AccessDenied()

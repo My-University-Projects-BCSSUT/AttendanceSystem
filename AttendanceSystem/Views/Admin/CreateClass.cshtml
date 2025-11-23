@@ -1,0 +1,110 @@
+@{
+    ViewData["Title"] = "Create Class";
+}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chalkboard-teacher"></i> Create New Class
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateClass" method="post">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Class Name</label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   placeholder="e.g., COS20007-A" required />
+                            <div class="form-text">Unique identifier for this class section</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="courseId" class="form-label">Course</label>
+                                    <select class="form-select" id="courseId" name="courseId" required>
+                                        <option value="">Select Course</option>
+                                        @if (ViewBag.Courses != null)
+                                        {
+                                            @foreach (var course in ViewBag.Courses as SelectList)
+                                            {
+                                                <option value="@course.Value">@course.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherId" class="form-label">Teacher</label>
+                                    <select class="form-select" id="teacherId" name="teacherId" required>
+                                        <option value="">Select Teacher</option>
+                                        @if (ViewBag.Teachers != null)
+                                        {
+                                            @foreach (var teacher in ViewBag.Teachers as SelectList)
+                                            {
+                                                <option value="@teacher.Value">@teacher.Text</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Location</label>
+                            <input type="text" class="form-control" id="location" name="location" 
+                                   placeholder="e.g., Room 101, Building A" />
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="dayOfWeek" class="form-label">Day of Week</label>
+                                    <select class="form-select" id="dayOfWeek" name="dayOfWeek" required>
+                                        <option value="0">Sunday</option>
+                                        <option value="1" selected>Monday</option>
+                                        <option value="2">Tuesday</option>
+                                        <option value="3">Wednesday</option>
+                                        <option value="4">Thursday</option>
+                                        <option value="5">Friday</option>
+                                        <option value="6">Saturday</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="startTime" class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" id="startTime" name="startTime" 
+                                           value="09:00" required />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="endTime" class="form-label">End Time</label>
+                                    <input type="time" class="form-control" id="endTime" name="endTime" 
+                                           value="11:00" required />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Classes" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-info text-white">
+                                <i class="fas fa-save"></i> Create Class
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
